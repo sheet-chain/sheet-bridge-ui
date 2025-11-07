@@ -74,8 +74,12 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       return undefined;
     }
 
-    // Check EVM wallet (Sheet Chain or other EVM chains)
-    if (lowerChainName === 'sheet chain' || lowerChainName === 'ethereum') {
+    // Check EVM wallet (Sheet Chain, Ethereum, BSC or other EVM chains)
+    if (
+      lowerChainName === 'sheet chain' ||
+      lowerChainName === 'ethereum' ||
+      lowerChainName === 'bsc'
+    ) {
       if (evmConnected && evmAddress) {
         return {
           address: evmAddress,

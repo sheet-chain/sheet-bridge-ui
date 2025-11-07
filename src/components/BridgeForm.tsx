@@ -7,6 +7,7 @@ import { isValidAmount } from '../utils/format';
 import { ArrowSwapIcon, SpinnerIcon } from './ui/icons';
 import { getSplTokenBalance, lockSplTokens } from '../api/sol';
 import { getSheetBalance } from '../api/sheet';
+import { getBscBalance } from '../api/bsc';
 
 export const BridgeForm: React.FC = () => {
   const { isChainConnected, getWalletByChain, setChain } = useWallet();
@@ -26,6 +27,20 @@ export const BridgeForm: React.FC = () => {
   useEffect(() => {
     setChain(fromChain);
   }, [fromChain, setChain]);
+
+  // Allow only non-Sheet -> Sheet or Sheet -> non-Sheet bridge
+  useEffect(() => {
+    if (fromChain.name !== 'sheet chain' && toChain.name !== 'sheet chain') {
+      setToChain(CHAINS[0]);
+      setToToken(CHAINS[0].tokens[0]);
+    }
+  }, [fromChain]);
+  useEffect(() => {
+    if (fromChain.name !== 'sheet chain' && toChain.name !== 'sheet chain') {
+      setFromChain(CHAINS[0]);
+      setFromToken(CHAINS[0].tokens[0]);
+    }
+  }, [toChain]);
 
   const handleSwap = () => {
     // Swap from and to chains
@@ -118,6 +133,9 @@ export const BridgeForm: React.FC = () => {
       } else if (fromChain.name === 'sheet chain') {
         const balance = await getSheetBalance(wallet.address);
         setFromBalance(balance.toFixed(2));
+      } else if (fromChain.name === 'bsc') {
+        const balance = await getBscBalance(wallet.address);
+        setFromBalance(balance.toFixed(2));
       }
     } catch (error) {
       console.error('Failed to fetch from balance:', error);
@@ -142,6 +160,9 @@ export const BridgeForm: React.FC = () => {
         setToBalance(balance.toFixed(2));
       } else if (toChain.name === 'sheet chain') {
         const balance = await getSheetBalance(wallet.address);
+        setToBalance(balance.toFixed(2));
+      } else if (toChain.name === 'bsc') {
+        const balance = await getBscBalance(wallet.address);
         setToBalance(balance.toFixed(2));
       }
     } catch (error) {
@@ -183,6 +204,7 @@ export const BridgeForm: React.FC = () => {
                   selectedChain={fromChain}
                   onTokenSelect={setFromToken}
                   onChainSelect={setFromChain}
+                  availableChains={CHAINS}
                   label=""
                 />
 
@@ -219,6 +241,9 @@ export const BridgeForm: React.FC = () => {
                   selectedChain={toChain}
                   onTokenSelect={setToToken}
                   onChainSelect={setToChain}
+                  availableChains={
+                    fromChain.name === 'sheet chain' ? CHAINS.slice(1) : CHAINS
+                  }
                   label=""
                 />
 

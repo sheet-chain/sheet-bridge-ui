@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { WagmiProvider, http } from 'wagmi';
-import { mainnet } from 'wagmi/chains';
+import { mainnet, sepolia, bsc, bscTestnet } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   RainbowKitProvider,
@@ -22,19 +22,28 @@ import { WalletProvider } from './contexts/walletContext';
 import { Header } from './components/Header';
 import { BridgeForm } from './components/BridgeForm';
 import { Footer } from './components/Footer';
-import { SOL_RPC_ENDPOINT, SHEET_RPC_ENDPOINT } from './config';
+import {
+  SOL_RPC_ENDPOINT,
+  SHEET_RPC_ENDPOINT,
+  BSC_RPC_ENDPOINT,
+  IS_MAINNET,
+} from './config';
 
 // Import RainbowKit and Solana wallet adapter styles
 import '@rainbow-me/rainbowkit/styles.css';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
 // Configure wagmi with RainbowKit for EVM chains
+const sheetChainConfig = IS_MAINNET ? mainnet : sepolia;
+const bscChainConfig = IS_MAINNET ? bsc : bscTestnet;
+
 const config = getDefaultConfig({
   appName: 'Sheet Bridge',
-  projectId: 'YOUR_WALLETCONNECT_PROJECT_ID', // Get one at https://cloud.walletconnect.com
-  chains: [mainnet],
+  projectId: '479c1dd316d4edfe4a4cce462bf1d26d',
+  chains: [sheetChainConfig, bscChainConfig],
   transports: {
-    [mainnet.id]: http(SHEET_RPC_ENDPOINT),
+    [sheetChainConfig.id]: http(SHEET_RPC_ENDPOINT),
+    [bscChainConfig.id]: http(BSC_RPC_ENDPOINT),
   },
 });
 

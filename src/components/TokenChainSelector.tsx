@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { Chain, Token } from '../types/index';
-import { CHAINS } from '../config';
 import { useClickOutside } from '../hooks/useClickOutside';
 import {
   ChevronDownIcon,
@@ -14,6 +13,7 @@ interface TokenChainSelectorProps {
   selectedChain: Chain;
   onTokenSelect: (token: Token) => void;
   onChainSelect: (chain: Chain) => void;
+  availableChains: Chain[];
   label: string;
 }
 
@@ -22,6 +22,7 @@ export const TokenChainSelector: React.FC<TokenChainSelectorProps> = ({
   selectedChain,
   onTokenSelect,
   onChainSelect,
+  availableChains,
   label,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -98,7 +99,7 @@ export const TokenChainSelector: React.FC<TokenChainSelectorProps> = ({
               <div className="md:w-1/2 border-b md:border-b-0 md:border-r border-white/5">
                 <div className="h-96 overflow-y-auto">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4">
-                    {CHAINS.map((chain) => (
+                    {availableChains.map((chain) => (
                       <button
                         key={chain.id}
                         onClick={() => handleChainSelect(chain)}
