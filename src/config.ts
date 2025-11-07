@@ -23,7 +23,7 @@ export const CHAINS: Chain[] = [
     tokens: [
       {
         symbol: 'SHEET',
-        name: 'Sheet Coin',
+        name: 'Native Sheet',
         icon: '/sheet.svg',
       },
     ],
